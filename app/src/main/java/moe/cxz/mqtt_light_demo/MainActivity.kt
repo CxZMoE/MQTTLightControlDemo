@@ -15,6 +15,11 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
     private val qos = 0
     private var mqttClient: MqttClient
 
+    // Topics COLOR|BRIGHTNESS|TOGGLE
+    private val colorTopic = "lightCtrlColor"
+    private val brightnessTopic = "lightCtrlBrightness"
+    private val toggleTopic = "lightCtrlToggle"
+
     init {
         mqttClient = MqttClient(brokerUrl, clientId, MemoryPersistence())
         try {
@@ -51,9 +56,8 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
 
         // On/Off
         buttonSetToggle.setOnClickListener {
-            val topic = "ledControl"
             statusOfToggle = if(statusOfToggle=="on") "off" else "on"
-            mqttClient.publish(topic, statusOfToggle.toByteArray(), qos, false)
+            mqttClient.publish(toggleTopic, statusOfToggle.toByteArray(), qos, false)
             when (statusOfToggle) {
                 "on" -> {
                     buttonSetToggle.text = "关灯"
@@ -68,26 +72,22 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
 
         // Red
         buttonSetRed.setOnClickListener {
-            val topic = "ledControl"
             val message = "red"
-            mqttClient.publish(topic, message.toByteArray(), qos, false)
+            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
         }
         // Green
         buttonSetGreen.setOnClickListener {
-            val topic = "ledControl"
             val message = "green"
-            mqttClient.publish(topic, message.toByteArray(), qos, false)
+            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
         }
         // Yellow
         buttonSetYellow.setOnClickListener {
-            val topic = "ledControl"
             val message = "yellow"
-            mqttClient.publish(topic, message.toByteArray(), qos, false)
+            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                val topic = "ledControl"
                 var message = "low"
                 when (progress) {
                     0 -> {
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
                     }
                 }
 
-                mqttClient.publish(topic, message.toByteArray(), qos, false)
+                mqttClient.publish(brightnessTopic, message.toByteArray(), qos, false)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
