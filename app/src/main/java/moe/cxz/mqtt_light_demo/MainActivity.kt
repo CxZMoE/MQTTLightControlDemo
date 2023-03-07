@@ -57,33 +57,57 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
         // On/Off
         buttonSetToggle.setOnClickListener {
             statusOfToggle = if(statusOfToggle=="on") "off" else "on"
-            mqttClient.publish(toggleTopic, statusOfToggle.toByteArray(), qos, false)
-            when (statusOfToggle) {
-                "on" -> {
-                    buttonSetToggle.text = "关灯"
-                }
+            try{
+                mqttClient.publish(toggleTopic, statusOfToggle.toByteArray(), qos, false)
+                when (statusOfToggle) {
+                    "on" -> {
+                        buttonSetToggle.text = "关灯"
+                    }
 
-                "off" -> {
-                    buttonSetToggle.text = "开灯"
+                    "off" -> {
+                        buttonSetToggle.text = "开灯"
+                    }
                 }
+            }catch (ex :Exception){
+                Log.d("mqtt", ex.message.toString())
+                mqttClient.reconnect()
             }
+
 
         }
 
         // Red
         buttonSetRed.setOnClickListener {
             val message = "red"
-            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            try {
+                mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            }catch (ex :Exception){
+                Log.d("mqtt", ex.message.toString())
+                mqttClient.reconnect()
+            }
+
         }
         // Green
         buttonSetGreen.setOnClickListener {
             val message = "green"
-            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            try {
+                mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            }catch (ex :Exception){
+                Log.d("mqtt", ex.message.toString())
+                mqttClient.reconnect()
+            }
+
         }
         // Yellow
         buttonSetYellow.setOnClickListener {
             val message = "yellow"
-            mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            try {
+                mqttClient.publish(colorTopic, message.toByteArray(), qos, false)
+            }catch (ex :Exception){
+                Log.d("mqtt", ex.message.toString())
+                mqttClient.reconnect()
+            }
+
         }
 
         seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
@@ -100,8 +124,13 @@ class MainActivity : AppCompatActivity(), IMqttActionListener {
                         message = "high"
                     }
                 }
+                try {
+                    mqttClient.publish(brightnessTopic, message.toByteArray(), qos, false)
+                }catch (ex :Exception){
+                    Log.d("mqtt", ex.message.toString())
+                    mqttClient.reconnect()
+                }
 
-                mqttClient.publish(brightnessTopic, message.toByteArray(), qos, false)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
